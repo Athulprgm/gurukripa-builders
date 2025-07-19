@@ -536,18 +536,14 @@ button {
     }
         .icon-2 {
     
-   width: 230px;
-   margin: 40px auto;
-   padding: 40px;
+   width: 190px;
+   margin: 10px auto;
+   padding: 20px;
 
    
    
 }
-/* .contact{
-    height: fit-content;
-    padding: 20px;
 
-} */
 }
 
 @media screen and (max-width: 480px) {
