@@ -543,6 +543,11 @@ button {
    
    
 }
+/* .contact{
+    height: fit-content;
+    padding: 20px;
+
+} */
 }
 
 @media screen and (max-width: 480px) {
@@ -617,10 +622,12 @@ button {
    width: 220px;
    margin: 10px auto;
    padding: 20px;
+   
 
    
    
 }
+
    
 }
 
