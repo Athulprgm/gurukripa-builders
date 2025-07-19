@@ -534,6 +534,15 @@ button {
         height: 45px;
         font-size: 16px;
     }
+        .icon-2 {
+    
+   width: 230px;
+   margin: 40px auto;
+   padding: 40px;
+
+   
+   
+}
 }
 
 @media screen and (max-width: 480px) {
