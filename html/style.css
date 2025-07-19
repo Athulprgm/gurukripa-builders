@@ -330,7 +330,9 @@ button {
 
 .text-4 {
     text-align: center;
-    margin: 250px auto;
+   margin-left: auto;
+   margin-right: auto;
+   margin-top: 150px;margin-bottom: 100px;
     width: fit-content;
     height: fit-content;
     color: white;
@@ -424,7 +426,7 @@ button {
     transform: translateY(-2px);
 }
 
-/* Responsive Design */
+
 @media screen and (max-width: 1024px) {
     .section-title {
         flex-direction: column;
@@ -447,7 +449,7 @@ button {
 }
 
 @media screen and (max-width: 768px) {
-    /* Hide desktop navigation, show mobile menu */
+   
     .list1 {
         display: none;
     }
@@ -456,7 +458,7 @@ button {
         display: block;
     }
     
-    /* Adjust hero section */
+   
     .section-title {
         margin-top: 50px;
     }
@@ -467,7 +469,6 @@ button {
         width: 95%;
     }
     
-    /* Cards responsive */
     .card {
         flex: 1 1 100%;
         max-width: none;
@@ -479,7 +480,7 @@ button {
         gap: 15px;
     }
     
-    /* Gallery responsive */
+  
     .gallery {
         margin-top: 50px;
         border-width: 4px;
@@ -496,7 +497,7 @@ button {
         transform: scale(1.05);
     }
     
-    /* Text adjustments */
+  
     .text-2 {
         margin-top: 100px;
     }
@@ -505,7 +506,7 @@ button {
         margin: 150px auto;
     }
     
-    /* Contact section */
+  
     .contact {
         padding: 15px;
     }
@@ -521,7 +522,7 @@ button {
         padding: 0 20px;
     }
     
-    /* Controls adjustment */
+   
     .controls {
         flex-wrap: wrap;
         justify-content: center;
