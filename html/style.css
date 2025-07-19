@@ -627,7 +627,7 @@ button {
 .map-container {
         height: 200px;
         /* margin: 5px auto; */
-        margin-left: -1px;
+        margin-left: 1.5px;
         
     }
    
