@@ -596,17 +596,20 @@ button {
     }
     
     .icon-2 {
-        font-size: 25px;
-        gap: 15px;
+        font-size: 35px;
+        gap: 30px;
+      
+      
     }
 
     .icon-2 {
     
+   width: 220px;
+   margin: 10px auto;
+   padding: 40px;
+
    
    
-    width: 300px;
- 
-    padding: 100px;
 }
    
 }
