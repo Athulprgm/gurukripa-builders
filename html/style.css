@@ -626,6 +626,7 @@ button {
 }
 .map-container {
         height: 200px;
+        margin: 5px auto;
         
     }
    
