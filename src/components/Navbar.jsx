@@ -27,6 +27,21 @@ const Navbar = () => {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (isOpen && !e.target.closest(".navbar")) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("click", handleClickOutside);
+    }
+
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [isOpen]);
+
   const toggleTheme = () => {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
@@ -42,7 +57,7 @@ const Navbar = () => {
   return (
     <nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
       <div className="container nav-container">
-        <a href="#" className="logo">
+        <a href="#home" className="logo" onClick={() => setIsOpen(false)}>
           GURUKRIPA <span>BUILDERS</span>
         </a>
 
@@ -60,7 +75,7 @@ const Navbar = () => {
 
           <button
             onClick={toggleTheme}
-            className="theme-toggle desktop-toggle"
+            className="theme-toggle"
             aria-label="Toggle Theme"
           >
             {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
@@ -71,7 +86,7 @@ const Navbar = () => {
         <div className="nav-mobile">
           <button
             onClick={toggleTheme}
-            className="theme-toggle mobile-toggle-btn"
+            className="theme-toggle"
             aria-label="Toggle Theme"
           >
             {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
@@ -80,6 +95,7 @@ const Navbar = () => {
           <button
             className="mobile-menu-btn"
             onClick={() => setIsOpen(!isOpen)}
+            aria-label="Toggle Menu"
           >
             {isOpen ? <X size={28} /> : <Menu size={28} />}
           </button>

@@ -69,7 +69,12 @@ const findResponse = (input) => {
 };
 
 const ChatHub = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(() => {
+    if (typeof window !== "undefined") {
+      return window.innerWidth >= 768; // Open by default only on desktop
+    }
+    return false;
+  });
   const [messages, setMessages] = useState([
     {
       id: 1,
