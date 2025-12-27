@@ -65,7 +65,7 @@ const Contact = () => {
           <div className="map-container">
             <iframe
               title="Gurukripa Builders Location"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3899.1498051377775!2d75.22915817521181!3d12.238134288013846!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6a07f33e5c16060f%3A0xf743f1beb37a67ee!2sGurukripa%20builders!5e0!3m2!1sen!2sin!4v1752645500513!5m2!1sen!2sin"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3899.1498051377775!2d75.22915817521181!3d12.238134288013846!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6a07f33e5c16060f%3A0xf743f1beb37a67ee!2sGurukripa%20builders!5e1!3m2!1sen!2sin!4v1752645500513!5m2!1sen!2sin"
               allowFullScreen=""
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
