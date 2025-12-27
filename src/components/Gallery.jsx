@@ -1,4 +1,11 @@
-import { Plus, X, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Plus,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 import {
   motion,
   useScroll,
@@ -6,20 +13,22 @@ import {
   AnimatePresence,
 } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-
-const images = [
-  "IMG-20250713-WA0025.jpg",
-  "IMG-20250713-WA0027.jpg",
-  "IMG-20250713-WA0031.jpg",
-  "IMG-20250713-WA0030.jpg",
-  "IMG-20250713-WA0032.jpg",
-  "IMG-20250713-WA0028.jpg",
-  "IMG-20250713-WA0026.jpg",
-  "IMG-20250713-WA0029.jpg",
-];
+import useConfig from "../hooks/useConfig";
 
 const Gallery = () => {
+  const { config, loading } = useConfig();
   const [selectedImage, setSelectedImage] = useState(null);
+  const [showAll, setShowAll] = useState(false);
+
+  // Get images from config, fallback to empty array
+  const images = config?.gallery || [];
+
+  // Show only 6 images initially, all when expanded
+  const INITIAL_DISPLAY_COUNT = 6;
+  const displayedImages = showAll
+    ? images
+    : images.slice(0, INITIAL_DISPLAY_COUNT);
+  const hasMoreImages = images.length > INITIAL_DISPLAY_COUNT;
 
   const openLightbox = (index) => setSelectedImage(index);
   const closeLightbox = () => setSelectedImage(null);
@@ -46,6 +55,26 @@ const Gallery = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedImage]);
 
+  if (loading) {
+    return (
+      <section id="gallery" className="section">
+        <div className="container">
+          <span className="section-subtitle">Our Work</span>
+          <h2 className="section-title">Gallery</h2>
+          <div
+            style={{
+              textAlign: "center",
+              padding: "60px 0",
+              color: "var(--color-text-muted)",
+            }}
+          >
+            Loading gallery...
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="gallery" className="section">
       <div className="container">
@@ -53,7 +82,7 @@ const Gallery = () => {
         <h2 className="section-title">Gallery</h2>
 
         <div className="gallery-grid">
-          {images.map((img, index) => (
+          {displayedImages.map((img, index) => (
             <GalleryItem
               key={index}
               img={img}
@@ -63,7 +92,33 @@ const Gallery = () => {
           ))}
         </div>
 
-        <div style={{ marginTop: "60px", textAlign: "center" }}>
+        {/* View More/Less Button */}
+        {hasMoreImages && (
+          <div style={{ marginTop: "40px", textAlign: "center" }}>
+            <button
+              onClick={() => setShowAll(!showAll)}
+              className="btn btn-outline"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+              }}
+            >
+              {showAll ? (
+                <>
+                  View Less <ChevronUp size={20} />
+                </>
+              ) : (
+                <>
+                  View More ({images.length - INITIAL_DISPLAY_COUNT} more){" "}
+                  <ChevronDown size={20} />
+                </>
+              )}
+            </button>
+          </div>
+        )}
+
+        <div style={{ marginTop: "40px", textAlign: "center" }}>
           <a
             href="/gallery/IMG-20241207-WA0006.jpg"
             download
@@ -98,7 +153,7 @@ const Gallery = () => {
 
               <motion.img
                 key={selectedImage}
-                src={`/gallery/${images[selectedImage]}`}
+                src={images[selectedImage]}
                 alt="Full View"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -141,7 +196,7 @@ const GalleryItem = ({ img, index, onClick }) => {
       transition={{ duration: 0.6 }}
       onClick={onClick}
     >
-      <img src={`/gallery/${img}`} alt="Project" loading="lazy" />
+      <img src={img} alt="Project" loading="lazy" />
       <div className="gallery-overlay">
         <div className="gallery-plus">
           <Plus />
