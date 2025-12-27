@@ -213,7 +213,7 @@ img {
   left: 0;
   right: 0;
   width: 100%;
-  z-index: 2000;
+  z-index: 2002;
   padding: 24px 0;
   background: transparent;
   transition: all 0.3s ease;
@@ -232,6 +232,8 @@ img {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
+  z-index: 2002;
 }
 
 .logo {
@@ -318,19 +320,35 @@ img {
   flex-direction: row;
   align-items: center;
   gap: 16px;
+  position: relative;
+  z-index: 2002;
 }
 
 .mobile-menu-btn {
   color: var(--color-text-primary);
-  padding: 8px;
+  padding: 12px;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: var(--transition-smooth);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  z-index: 2002;
+  min-width: 48px;
+  min-height: 48px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .mobile-menu-btn:hover {
+  background: var(--color-bg-secondary);
+}
+
+.mobile-menu-btn:active {
+  transform: scale(0.95);
   background: var(--color-bg-secondary);
 }
 
@@ -347,7 +365,7 @@ img {
   transform: translateY(-100%);
   opacity: 0;
   transition: all 0.3s ease;
-  z-index: 1999;
+  z-index: 2001;
   border-bottom: 1px solid var(--color-border);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   pointer-events: none;

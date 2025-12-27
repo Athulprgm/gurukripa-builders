@@ -30,13 +30,22 @@ const Navbar = () => {
   // Close mobile menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (isOpen && !e.target.closest(".navbar")) {
+      // Don't close if clicking on navbar or mobile menu button
+      if (
+        isOpen &&
+        !e.target.closest(".navbar") &&
+        !e.target.closest(".mobile-menu") &&
+        !e.target.closest(".mobile-menu-btn")
+      ) {
         setIsOpen(false);
       }
     };
 
     if (isOpen) {
-      document.addEventListener("click", handleClickOutside);
+      // Use a small delay to prevent immediate closing
+      setTimeout(() => {
+        document.addEventListener("click", handleClickOutside);
+      }, 100);
     }
 
     return () => document.removeEventListener("click", handleClickOutside);
@@ -46,12 +55,15 @@ const Navbar = () => {
   useEffect(() => {
     if (isOpen) {
       document.body.classList.add("menu-open");
+      document.body.style.overflow = "hidden";
     } else {
       document.body.classList.remove("menu-open");
+      document.body.style.overflow = "";
     }
 
     return () => {
       document.body.classList.remove("menu-open");
+      document.body.style.overflow = "";
     };
   }, [isOpen]);
 
