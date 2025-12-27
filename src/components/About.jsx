@@ -15,7 +15,7 @@ const About = () => {
           >
             <img src="/about-new.png" alt="Modern Interior" />
             <div className="experience-badge">
-              <span className="years">2+</span>
+              <span className="years">4+</span>
               <span className="text">
                 Years of
                 <br />
