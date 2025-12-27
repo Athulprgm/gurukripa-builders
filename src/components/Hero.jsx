@@ -13,10 +13,7 @@ const Hero = () => {
 
   return (
     <section id="home" className="hero" ref={ref}>
-      <div
-        className="container"
-        style={{ width: "100%", position: "relative", zIndex: 10 }}
-      >
+      <div className="container">
         <motion.div
           className="hero-content"
           style={{ y: yText, opacity: opacityText }}
@@ -50,11 +47,7 @@ const Hero = () => {
             <a href="#contact" className="btn btn-primary">
               Start Project
             </a>
-            <a
-              href="#services"
-              className="btn btn-outline"
-              style={{ marginLeft: "16px" }}
-            >
+            <a href="#services" className="btn btn-outline">
               View Services
             </a>
           </motion.div>
