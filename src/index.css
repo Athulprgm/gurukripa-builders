@@ -4403,7 +4403,7 @@ body.menu-open {
 
 @media (max-width: 768px) {
   .app {
-    margin: 0 10px;
+    overflow-x: hidden;
   }
 
   .hero {
