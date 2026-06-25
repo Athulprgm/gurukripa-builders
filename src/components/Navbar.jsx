@@ -108,7 +108,7 @@ const Navbar = () => {
           </ul>
 
           {/* Desktop Actions */}
-          <div className="nav-actions-desktop" style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+          <div className="nav-actions-desktop">
             <a
               href="#contact"
               className="nav-cta-btn"
