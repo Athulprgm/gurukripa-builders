@@ -75,7 +75,7 @@
   --container: 1280px;
   --section-pad: clamp(80px, 8vw, 150px);
   --section-pad-sm: clamp(50px, 5vw, 90px);
-  --gutter: clamp(20px, 3vw, 40px);
+  --gutter: clamp(28px, 5vw, 40px);
 
   /* Fluid Typography */
   --font-size-h1: clamp(2.5rem, 5vw + 1rem, 5.5rem);
