@@ -59,7 +59,7 @@ const Gallery = () => {
   return (
     <section id="gallery" className="gallery-section" style={{ overflow: 'hidden' }}>
       <div className="container">
-        <div className="gallery-header" style={{ marginBottom: "2rem", display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+        <div className="gallery-header">
           <div>
             <span className="section-label">Our Work</span>
             <h2 className="section-title" style={{ marginBottom: 0 }}>CREATIVE GALLERY</h2>
