@@ -1,73 +1,128 @@
 import { motion } from "framer-motion";
-import { CheckCircle } from "lucide-react";
+import { Building, Paintbrush, Leaf, Search, ClipboardCheck, HardHat } from "lucide-react";
+
+const features = [
+  { icon: <Building size={18} />, label: "Residential & Commercial" },
+  { icon: <Paintbrush size={18} />, label: "Premium Interiors" },
+  { icon: <Leaf size={18} />, label: "Landscape Design" },
+  { icon: <Search size={18} />, label: "Detailed Supervision" },
+  { icon: <ClipboardCheck size={18} />, label: "Planning & Estimation" },
+  { icon: <HardHat size={18} />, label: "Full Execution" },
+];
+
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+  },
+};
 
 const About = () => {
   return (
-    <section id="about" className="section">
+    <section id="about" className="about-section">
       <div className="container">
-        <div className="about-wrapper">
+        <div className="about-layout">
+          {/* Left — Image */}
           <motion.div
-            className="about-image"
-            initial={{ opacity: 0, x: -50 }}
+            className="about-left"
+            initial={{ opacity: 0, x: -60 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           >
-            <img src="/about-new.png" alt="Modern Interior" />
-            <div className="experience-badge">
-              <span className="years">4+</span>
-              <span className="text">
+            <div className="about-image-wrapper">
+              <img
+                src="/about-new.png"
+                alt="Gurukripa Builders — Modern Interior Design"
+                loading="lazy"
+              />
+              <div className="about-image-overlay" />
+
+              {/* Blueprint corner decorations */}
+              <div className="about-corner tl" />
+              <div className="about-corner br" />
+            </div>
+
+            {/* Floating badge */}
+            <div className="about-badge">
+              <span className="about-badge-number">4+</span>
+              <span className="about-badge-text">
                 Years of
                 <br />
-                Experience
+                Excellence
               </span>
             </div>
           </motion.div>
 
+          {/* Right — Content */}
           <motion.div
-            className="about-content"
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            className="about-right"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
           >
-            <span className="section-subtitle">Who We Are</span>
-            <h2 className="section-title">Reliable Construction Partners</h2>
-            <p className="about-description">
+            <motion.div variants={itemVariants}>
+              <span className="section-label">Who We Are</span>
+            </motion.div>
+
+            <motion.h2 className="about-heading" variants={itemVariants}>
+              RELIABLE
+              <br />
+              CONSTRUCTION
+              <br />
+              <span className="gold-text">PARTNERS.</span>
+            </motion.h2>
+
+            {/* Pull quote */}
+            <motion.p className="about-pull-quote" variants={itemVariants}>
+              "We don't just build structures — we create spaces where life unfolds."
+            </motion.p>
+
+            <motion.p className="about-text" variants={itemVariants}>
               We are a team of experienced professionals committed to delivering
               quality construction and design solutions. Our services span the
-              entire project lifecycle—from planning and estimating to
+              entire project lifecycle — from planning and estimating to
               supervision and execution.
-            </p>
-            <p className="about-description">
+            </motion.p>
+
+            <motion.p className="about-text" variants={itemVariants}>
               With a strong focus on precision, creativity, and customer
               satisfaction, we bring each project to life with attention to
               detail and a dedication to excellence.
-            </p>
+            </motion.p>
 
-            <ul className="about-features">
-              <li>
-                <CheckCircle size={20} className="icon" /> Residential &
-                Commercial
-              </li>
-              <li>
-                <CheckCircle size={20} className="icon" /> Premium Interiors
-              </li>
-              <li>
-                <CheckCircle size={20} className="icon" /> Landscape Design
-              </li>
-              <li>
-                <CheckCircle size={20} className="icon" /> Detailed Supervision
-              </li>
-            </ul>
+            {/* Features pills */}
+            <motion.ul className="about-features" variants={containerVariants}>
+              {features.map((f, i) => (
+                <motion.li
+                  key={i}
+                  className="about-feature-item"
+                  variants={itemVariants}
+                >
+                  <span className="about-feature-icon">{f.icon}</span>
+                  {f.label}
+                </motion.li>
+              ))}
+            </motion.ul>
 
-            <a href="#contact" className="btn btn-outline">
-              Learn More
-            </a>
+            <motion.div variants={itemVariants}>
+              <a href="#contact" className="btn btn-primary">
+                Start a Project
+              </a>
+            </motion.div>
           </motion.div>
         </div>
       </div>
     </section>
   );
 };
+
 export default About;

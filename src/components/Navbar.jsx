@@ -1,146 +1,177 @@
-import { useState, useEffect } from "react";
-import { Menu, X, Sun, Moon } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Search } from "lucide-react";
+
+const navLinks = [
+  { name: "Home", href: "#home" },
+  { name: "About", href: "#about" },
+  { name: "Services", href: "#services" },
+  { name: "Gallery", href: "#gallery" },
+  { name: "Testimonials", href: "#testimonials" },
+  { name: "Contact", href: "#contact" },
+];
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
 
-  // Theme State
-  const [theme, setTheme] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("theme") || "dark";
-    }
-    return "dark";
-  });
-
+  // Scroll detection
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => setScrolled(window.scrollY > 60);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Theme Effect
+  // Active section detection via IntersectionObserver
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("theme", theme);
-  }, [theme]);
+    const sectionIds = navLinks.map((l) => l.href.slice(1));
+    const observers = [];
 
-  // Close mobile menu when clicking outside
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) setActiveSection(id);
+        },
+        { rootMargin: "-40% 0px -55% 0px" }
+      );
+      observer.observe(el);
+      observers.push(observer);
+    });
+
+    return () => observers.forEach((obs) => obs.disconnect());
+  }, []);
+
+  // Close mobile menu on outside click
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      // Don't close if clicking on navbar or mobile menu button
-      if (
-        isOpen &&
-        !e.target.closest(".navbar") &&
-        !e.target.closest(".mobile-menu") &&
-        !e.target.closest(".mobile-menu-btn")
-      ) {
+    if (!isOpen) return;
+    const handle = (e) => {
+      if (!e.target.closest(".navbar") && !e.target.closest(".mobile-menu")) {
         setIsOpen(false);
       }
     };
-
-    if (isOpen) {
-      // Use a small delay to prevent immediate closing
-      setTimeout(() => {
-        document.addEventListener("click", handleClickOutside);
-      }, 100);
-    }
-
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, [isOpen]);
-
-  // Lock body scroll when menu is open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.classList.add("menu-open");
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.classList.remove("menu-open");
-      document.body.style.overflow = "";
-    }
-
+    const timeout = setTimeout(() => document.addEventListener("click", handle), 100);
     return () => {
-      document.body.classList.remove("menu-open");
-      document.body.style.overflow = "";
+      clearTimeout(timeout);
+      document.removeEventListener("click", handle);
     };
   }, [isOpen]);
 
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+  // Body scroll lock
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add("menu-open");
+    } else {
+      document.body.classList.remove("menu-open");
+    }
+    return () => document.body.classList.remove("menu-open");
+  }, [isOpen]);
+
+  // Add ripple to magnetic buttons
+  const addRipple = (e) => {
+    const btn = e.currentTarget;
+    const rect = btn.getBoundingClientRect();
+    const ripple = document.createElement("span");
+    ripple.className = "ripple";
+    ripple.style.left = `${e.clientX - rect.left}px`;
+    ripple.style.top = `${e.clientY - rect.top}px`;
+    btn.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 700);
   };
 
-  const navLinks = [
-    { name: "Home", href: "#home" },
-    { name: "About", href: "#about" },
-    { name: "Services", href: "#services" },
-    { name: "Gallery", href: "#gallery" },
-    { name: "Contact", href: "#contact" },
-  ];
+  const closeMenu = () => setIsOpen(false);
 
   return (
-    <nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
-      <div className="container nav-container">
-        <a href="#home" className="logo" onClick={() => setIsOpen(false)}>
-          GURUKRIPA <span>BUILDERS</span>
-        </a>
+    <>
+      <nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
+        <div className="nav-inner">
+          {/* Logo */}
+          <a href="#home" className="nav-logo" onClick={closeMenu}>
+            <div>GURUKRIPA <span>BUILDERS</span></div>
+            <div className="nav-logo-tagline">A Gurukripa Group of Company</div>
+          </a>
 
-        {/* Desktop Nav & Toggle */}
-        <div className="nav-desktop">
-          <ul className="nav-links">
+          {/* Desktop Links */}
+          <ul className="nav-links-desktop">
             {navLinks.map((link) => (
               <li key={link.name}>
-                <a href={link.href} className="nav-link">
+                <a
+                  href={link.href}
+                  className={`nav-link ${activeSection === link.href.slice(1) ? "active" : ""}`}
+                >
                   {link.name}
                 </a>
               </li>
             ))}
           </ul>
 
-          <button
-            onClick={toggleTheme}
-            className="theme-toggle"
-            aria-label="Toggle Theme"
-          >
-            {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
-          </button>
+          {/* Desktop Actions */}
+          <div className="nav-actions-desktop" style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+            <a
+              href="#contact"
+              className="nav-cta-btn"
+              onClick={(e) => {
+                addRipple(e);
+                e.preventDefault();
+                document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              style={{ position: "relative", overflow: "hidden" }}
+            >
+              Get a Quote
+            </a>
+          </div>
+
+          {/* Mobile Actions */}
+          <div className="nav-mobile-actions">
+            <button
+              className={`mobile-menu-btn ${isOpen ? "open" : ""}`}
+              onClick={() => setIsOpen(!isOpen)}
+              aria-label="Toggle Menu"
+              aria-expanded={isOpen}
+            >
+              <span className="hamburger-line" />
+              <span className="hamburger-line" />
+              <span className="hamburger-line" />
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Full-screen Mobile Menu */}
+      <div className={`mobile-menu ${isOpen ? "active" : ""}`} aria-hidden={!isOpen}>
+        <div className="mobile-menu-links">
+          {navLinks.map((link, i) => (
+            <motion.a
+              key={link.name}
+              href={link.href}
+              className="mobile-nav-link"
+              onClick={closeMenu}
+              initial={{ opacity: 0, x: -48 }}
+              animate={isOpen ? { opacity: 1, x: 0 } : { opacity: 0, x: -48 }}
+              transition={{ delay: i * 0.07, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {link.name}
+            </motion.a>
+          ))}
         </div>
 
-        {/* Mobile Actions */}
-        <div className="nav-mobile">
-          <button
-            onClick={toggleTheme}
-            className="theme-toggle"
-            aria-label="Toggle Theme"
-          >
-            {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
-          </button>
-
-          <button
-            className="mobile-menu-btn"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle Menu"
-          >
-            {isOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Menu Overlay */}
-      <div className={`mobile-menu ${isOpen ? "active" : ""}`}>
-        {navLinks.map((link) => (
-          <a
-            key={link.name}
-            href={link.href}
-            className="mobile-link"
-            onClick={() => setIsOpen(false)}
-          >
-            {link.name}
+        <motion.div
+          className="mobile-menu-footer"
+          initial={{ opacity: 0 }}
+          animate={isOpen ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ delay: 0.4, duration: 0.4 }}
+        >
+          <a href="tel:917558988689" className="mobile-contact-link">
+            +91 7558988689
           </a>
-        ))}
+          <a href="mailto:gurukripa9070@gmail.com" className="mobile-contact-link">
+            gurukripa9070@gmail.com
+          </a>
+        </motion.div>
       </div>
-    </nav>
+    </>
   );
 };
 

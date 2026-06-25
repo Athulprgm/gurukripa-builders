@@ -1,71 +1,52 @@
 import {
-  Plus,
-  X,
   ChevronLeft,
   ChevronRight,
-  ChevronDown,
-  ChevronUp,
 } from "lucide-react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  AnimatePresence,
-} from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
 import useConfig from "../hooks/useConfig";
 
 const Gallery = () => {
   const { config, loading } = useConfig();
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [showAll, setShowAll] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
 
   // Get images from config, fallback to empty array
   const images = config?.gallery || [];
 
-  // Show only 6 images initially, all when expanded
-  const INITIAL_DISPLAY_COUNT = 6;
-  const displayedImages = showAll
-    ? images
-    : images.slice(0, INITIAL_DISPLAY_COUNT);
-  const hasMoreImages = images.length > INITIAL_DISPLAY_COUNT;
-
-  const openLightbox = (index) => setSelectedImage(index);
-  const closeLightbox = () => setSelectedImage(null);
-
-  const nextImage = (e) => {
-    e.stopPropagation();
-    setSelectedImage((prev) => (prev + 1) % images.length);
+  const paginate = (newDirection) => {
+    setDirection(newDirection);
+    setCurrentIndex((prev) => {
+      let nextIndex = prev + newDirection;
+      if (nextIndex < 0) nextIndex = images.length - 1;
+      if (nextIndex >= images.length) nextIndex = 0;
+      return nextIndex;
+    });
   };
 
-  const prevImage = (e) => {
-    e.stopPropagation();
-    setSelectedImage((prev) => (prev - 1 + images.length) % images.length);
-  };
-
-  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (selectedImage === null) return;
-      if (e.key === "Escape") closeLightbox();
-      if (e.key === "ArrowRight") nextImage(e);
-      if (e.key === "ArrowLeft") prevImage(e);
+      if (e.key === "ArrowRight") paginate(1);
+      if (e.key === "ArrowLeft") paginate(-1);
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedImage]);
+  }, [images.length]);
 
-  if (loading) {
+  if (loading || images.length === 0) {
     return (
-      <section id="gallery" className="section">
+      <section id="gallery" className="gallery-section">
         <div className="container">
-          <span className="section-subtitle">Our Work</span>
-          <h2 className="section-title">Gallery</h2>
+          <span className="section-label">Our Work</span>
+          <h2 className="section-title">GALLERY</h2>
           <div
             style={{
               textAlign: "center",
-              padding: "60px 0",
-              color: "var(--color-text-muted)",
+              padding: "80px 0",
+              color: "var(--muted)",
+              fontSize: "0.875rem",
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
             }}
           >
             Loading gallery...
@@ -76,145 +57,97 @@ const Gallery = () => {
   }
 
   return (
-    <section id="gallery" className="section">
+    <section id="gallery" className="gallery-section" style={{ overflow: 'hidden' }}>
       <div className="container">
-        <span className="section-subtitle">Our Work</span>
-        <h2 className="section-title">Gallery</h2>
-
-        <div className="gallery-grid">
-          {displayedImages.map((img, index) => (
-            <GalleryItem
-              key={index}
-              img={img}
-              index={index}
-              onClick={() => openLightbox(index)}
-            />
-          ))}
-        </div>
-
-        {/* View More/Less Button */}
-        {hasMoreImages && (
-          <div style={{ marginTop: "40px", textAlign: "center" }}>
-            <button
-              onClick={() => setShowAll(!showAll)}
-              className="btn btn-outline"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "8px",
-              }}
-            >
-              {showAll ? (
-                <>
-                  View Less <ChevronUp size={20} />
-                </>
-              ) : (
-                <>
-                  View More ({images.length - INITIAL_DISPLAY_COUNT} more){" "}
-                  <ChevronDown size={20} />
-                </>
-              )}
-            </button>
+        <div className="gallery-header" style={{ marginBottom: "2rem", display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+          <div>
+            <span className="section-label">Our Work</span>
+            <h2 className="section-title" style={{ marginBottom: 0 }}>CREATIVE GALLERY</h2>
           </div>
-        )}
+          <div className="gallery-controls-top">
+             <button className="slider-btn" onClick={() => paginate(-1)}>
+               <ChevronLeft size={24} />
+             </button>
+             <button className="slider-btn" onClick={() => paginate(1)}>
+               <ChevronRight size={24} />
+             </button>
+          </div>
+        </div>
 
-        <div style={{ marginTop: "40px", textAlign: "center" }}>
-          <a
-            href="/gallery/IMG-20241207-WA0006.jpg"
-            download
-            className="btn btn-primary"
-          >
-            Download Brochure
-          </a>
+        <div className="gallery-slider-wrapper">
+          <div className="gallery-slider-track">
+             <AnimatePresence mode="popLayout" initial={false} custom={direction}>
+                  <motion.div
+                  key={currentIndex}
+                  custom={direction}
+                  variants={{
+                    enter: (dir) => ({
+                      x: dir > 0 ? 1000 : -1000,
+                      opacity: 0,
+                      scale: 0.8,
+                    }),
+                    center: {
+                      zIndex: 1,
+                      x: 0,
+                      opacity: 1,
+                      scale: 1,
+                    },
+                    exit: (dir) => ({
+                      zIndex: 0,
+                      x: dir < 0 ? 1000 : -1000,
+                      opacity: 0,
+                      scale: 0.8,
+                    })
+                  }}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{
+                    x: { type: "spring", stiffness: 200, damping: 25 },
+                    opacity: { duration: 0.3 },
+                    scale: { duration: 0.4 }
+                  }}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={1}
+                  onDragEnd={(e, { offset, velocity }) => {
+                    const swipe = Math.abs(offset.x) * velocity.x;
+                    if (swipe < -10000) {
+                      paginate(1);
+                    } else if (swipe > 10000) {
+                      paginate(-1);
+                    }
+                  }}
+                  className="gallery-slide-main"
+                >
+                  <img src={images[currentIndex]} alt={`Project ${currentIndex + 1}`} loading="lazy" />
+                  <div className="slide-overlay">
+                    <h3 className="slide-title">Residence {currentIndex + 1}</h3>
+                    <p className="slide-category">Premium Project</p>
+                  </div>
+                </motion.div>
+             </AnimatePresence>
+          </div>
+
+          {/* Thumbnail preview */}
+          <div className="gallery-thumbnails">
+            {images.map((img, idx) => (
+              <div 
+                key={idx} 
+                className={`thumb-item ${idx === currentIndex ? 'active' : ''}`}
+                onClick={() => {
+                  if (idx === currentIndex) return;
+                  setDirection(idx > currentIndex ? 1 : -1);
+                  setCurrentIndex(idx);
+                }}
+              >
+                <img src={img} alt={`thumb ${idx}`} loading="lazy" />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-
-      {/* Lightbox Overlay */}
-      <AnimatePresence>
-        {selectedImage !== null && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="lightbox-overlay"
-            onClick={closeLightbox}
-          >
-            <button className="lightbox-close" onClick={closeLightbox}>
-              <X size={32} />
-            </button>
-
-            <div
-              className="lightbox-content"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button className="lightbox-nav prev" onClick={prevImage}>
-                <ChevronLeft size={40} />
-              </button>
-
-              <motion.img
-                key={selectedImage}
-                src={images[selectedImage]}
-                alt="Full View"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3 }}
-                className="lightbox-img"
-              />
-
-              <button className="lightbox-nav next" onClick={nextImage}>
-                <ChevronRight size={40} />
-              </button>
-            </div>
-
-            <div className="lightbox-counter">
-              {selectedImage + 1} / {images.length}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </section>
-  );
-};
-
-const GalleryItem = ({ img, index, onClick }) => {
-  const ref = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-  const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
-  const rotate = useTransform(scrollYProgress, [0, 1], [-2, 2]);
-
-  return (
-    <motion.div
-      ref={ref}
-      className="gallery-item"
-      style={{ y, rotateX: rotate, perspective: 1000 }}
-      initial={{ opacity: 0, scale: 0.9 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.6 }}
-      onClick={onClick}
-    >
-      <img src={img} alt="Project" loading="lazy" />
-      <div className="gallery-overlay">
-        <div className="gallery-plus">
-          <Plus />
-        </div>
-        <span
-          style={{
-            marginTop: "16px",
-            color: "white",
-            fontWeight: "600",
-            letterSpacing: "1px",
-            textTransform: "uppercase",
-            fontSize: "0.9rem",
-          }}
-        >
-          View Project
-        </span>
-      </div>
-    </motion.div>
   );
 };
 

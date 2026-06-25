@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { MessageSquare, X, Send, Bot } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Robot Knowledge Base for "Perfect Response"
+// ─── Knowledge Base (unchanged) ────────────────────────
 const KNOWLEDGE_BASE = {
   greetings: {
     keywords: ["hello", "hi", "hey", "start", "morning", "evening"],
@@ -43,7 +43,7 @@ const KNOWLEDGE_BASE = {
   projects: {
     keywords: ["project", "gallery", "portfolio", "past", "done", "photos"],
     response:
-      "We have completed over 50+ residential and commercial projects across Kerala. Check out our 'Gallery' section on the homepage to see our work!",
+      "We have completed over 96+ residential and commercial projects across Kerala. Check out our 'Gallery' section on the homepage to see our work!",
   },
   time: {
     keywords: ["time", "long", "duration", "finish", "when"],
@@ -57,24 +57,25 @@ const KNOWLEDGE_BASE = {
 };
 
 const findResponse = (input) => {
-  const lowerInput = input.toLowerCase();
+  const lower = input.toLowerCase();
   for (const key in KNOWLEDGE_BASE) {
     if (key === "default") continue;
-    const topic = KNOWLEDGE_BASE[key];
-    if (topic.keywords.some((word) => lowerInput.includes(word))) {
-      return topic.response;
+    if (KNOWLEDGE_BASE[key].keywords.some((w) => lower.includes(w))) {
+      return KNOWLEDGE_BASE[key].response;
     }
   }
   return KNOWLEDGE_BASE.default.response;
 };
 
+// ─── ChatHub Component ──────────────────────────────────
 const ChatHub = () => {
   const [isOpen, setIsOpen] = useState(() => {
     if (typeof window !== "undefined") {
-      return window.innerWidth >= 768; // Open by default only on desktop
+      return window.innerWidth >= 768;
     }
     return false;
   });
+
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -87,30 +88,20 @@ const ChatHub = () => {
 
   const toggleChat = () => setIsOpen(!isOpen);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const handleSend = () => {
     if (!input.trim()) return;
-
     const userMsg = { id: Date.now(), text: input, sender: "user" };
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
-
-    // Simulate "thinking" delay for realism
     setTimeout(() => {
-      const responseText = findResponse(userMsg.text);
-      const botResponse = {
-        id: Date.now() + 1,
-        text: responseText,
-        sender: "bot",
-      };
-      setMessages((prev) => [...prev, botResponse]);
+      setMessages((prev) => [
+        ...prev,
+        { id: Date.now() + 1, text: findResponse(userMsg.text), sender: "bot" },
+      ]);
     }, 600);
   };
 
@@ -125,38 +116,44 @@ const ChatHub = () => {
         onClick={toggleChat}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
+        aria-label="Toggle chat"
       >
-        {isOpen ? <X size={24} /> : <Bot size={28} />}
+        {isOpen ? <X size={22} /> : <Bot size={24} />}
       </motion.button>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div
             className="chat-window"
-            initial={{ opacity: 0, y: 20, scale: 0.9 }}
+            initial={{ opacity: 0, y: 16, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.9 }}
+            exit={{ opacity: 0, y: 16, scale: 0.96 }}
+            transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
           >
+            {/* Header */}
             <div className="chat-header">
               <div className="chat-avatar">
-                <Bot size={20} />
+                <Bot size={18} />
               </div>
               <div className="chat-info">
                 <h4>Architect Bot</h4>
                 <span>Automated Assistant</span>
               </div>
-              <button onClick={toggleChat} className="chat-close">
-                <X size={18} />
+              <button
+                onClick={toggleChat}
+                className="chat-close"
+                aria-label="Close chat"
+              >
+                <X size={16} />
               </button>
             </div>
 
+            {/* Messages */}
             <div className="chat-messages">
               {messages.map((msg) => (
                 <div
                   key={msg.id}
-                  className={`message ${
-                    msg.sender === "user" ? "user" : "bot"
-                  }`}
+                  className={`message ${msg.sender === "user" ? "user" : "bot"}`}
                 >
                   {msg.text}
                 </div>
@@ -164,6 +161,7 @@ const ChatHub = () => {
               <div ref={messagesEndRef} />
             </div>
 
+            {/* Input */}
             <div className="chat-input-area">
               <input
                 type="text"
@@ -172,8 +170,12 @@ const ChatHub = () => {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
               />
-              <button onClick={handleSend} disabled={!input.trim()}>
-                <Send size={18} />
+              <button
+                onClick={handleSend}
+                disabled={!input.trim()}
+                aria-label="Send message"
+              >
+                <Send size={16} />
               </button>
             </div>
           </motion.div>
